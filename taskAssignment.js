@@ -1,5 +1,6 @@
 // what i have to do
 //convert dummy data devs & tasks
+// validate data  : return error
 //create obje of developers with empty task lists 
 //create function help to chck if all dependencies are complated
 //create fun to calcu if dev can take this task or not
@@ -23,6 +24,23 @@ const tasks = [
 
 ];
 
+
+// validator fun for dev 
+function isValidDeveloper(dev) {
+    return dev && typeof dev.name === 'string' && typeof dev.skillLevel === 'number' &&
+        typeof dev.maxHours === 'number' && typeof dev.preferredTaskType === 'string';
+}
+
+
+// validator fun for task 
+function isValidTask(task) {
+    return task && typeof task.taskName === 'string' && typeof task.difficulty === 'number' &&
+        typeof task.hoursRequired === 'number' && typeof task.taskType === 'string' &&
+        typeof task.priority === 'number' && Array.isArray(task.dependencies);
+}
+
+
+
 // func to check if all depens are completed
 function areDependenciesCompleted(task, developers) {
     return task.dependencies.every(dep =>
@@ -42,6 +60,16 @@ function canDeveloperTakeTask(dev, task) {
 
 // this main function 
 function assignTasksWithPriorityAndDependencies(developers, tasks) {
+
+
+    // validation
+    if (!Array.isArray(developers) || !developers.every(isValidDeveloper)) {
+        return { error: "Invalid developers data" };
+    }
+    if (!Array.isArray(tasks) || !tasks.every(isValidTask)) {
+        return { error: "Invalid tasks data" };
+    }
+
 
 
     //1- create copy of developers with empty task lists
@@ -105,6 +133,12 @@ function runTasksTest() {
 
     const result = assignTasksWithPriorityAndDependencies(developers, tasks);
 
+
+    // display error if exist
+    if (result.error) {
+        console.error(result.error);
+        return;
+    }
 
 
     // display results for each developer
